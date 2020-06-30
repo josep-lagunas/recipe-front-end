@@ -1,5 +1,3 @@
-const BASE_URL = 'http://localhost:8080/api/'
-
 async function get(url) {
     const request = buildRequest(url, 'GET');
     const response = await fetch(request);
@@ -52,4 +50,4 @@ function buildRequest(url, method, payload) {
     }
 }
 
-export {get, post, put, remove, BASE_URL};
+export {get, post, put, remove};

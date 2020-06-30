@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
-import RecipesList from "./components/RecipesList";
-import RecipeForm from "./components/RecipeForm"
+import RecipesList from "./components/RecipeList/RecipesList";
+import RecipeForm from "./components/RecipeForm/RecipeForm"
 import {v4 as uuid} from "uuid";
 import {BrowserRouter, Redirect, Route, Switch} from "react-router-dom";
 

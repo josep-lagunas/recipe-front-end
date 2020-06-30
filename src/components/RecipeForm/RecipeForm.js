@@ -1,23 +1,22 @@
 import React, {useState} from "react";
-import Ingredient from "./Ingredient";
+import Ingredient from "../Ingredient/Ingredient";
 import styled from 'styled-components'
 import {v4 as uuid} from 'uuid';
-import {BASE_URL, post, put} from "../helpers/ajax.helpers";
 import {useHistory} from 'react-router-dom';
-import '../utils.css';
+import '../../utils.css';
+import RecipesService from "../../services/Recipes.Service";
 
 const Fields = styled.div`
-    margin-top: 10vh;
+    margin-top: 5vh;
     `;
 
 const FormContainer = styled.div`
     background-color: #fff;
     display: inline-table;
     position: relative;
-    margin: 10vh; 
-    margin-top: 20vh;   
+    margin-top: 20vh;
     max-height: 60vh;
-    border: solid 0.5px #fff;
+    border: solid 1.1px #fff;
     border-radius: 4px;
     width: 40vw;
     cursor: pointer;
@@ -30,17 +29,17 @@ const FormContainer = styled.div`
 
 const Input = styled.input`
     display: flex;
-    width: 60%;     
+    width: 65%;     
     margin-left: 3%;
-    font-size: 0.5em;
+    font-size: 1.1em;
     padding: 3px;
     `;
 
 const TextArea = styled.textarea`
     display: flex;
-    width: 60%;
+    width: 65%;
     margin-left: 3%;
-    font-size: 0.5em;
+    font-size: 1.1em;
     padding: 3px;
     font-family: arial;
     `;
@@ -48,7 +47,7 @@ const TextArea = styled.textarea`
 const Label = styled.label`
     display: inline-block;
     width: 27%;
-    font-size: 0.5em;
+    font-size: 1.1em;
     text-align: right;
     font-family: arial;
     `;
@@ -56,7 +55,7 @@ const Label = styled.label`
 const FieldWrapper = styled.div`
     display: flex;
     align-items: center;
-    width: 96%;
+    width: 100%;
     margin-top: 2%;
     `;
 
@@ -67,7 +66,7 @@ const Icon = styled.i`
     `;
 
 const ButtonsWrapper = styled.div`
-    width: 90%;
+    width: 95%;
     bottom: 15px;
     text-align: right;
     margin: 10px;
@@ -76,32 +75,36 @@ const ButtonsWrapper = styled.div`
 const Button = styled.button`
     margin-right: 10px;
     width: auto;
-    font-size: 0.5em;
+    font-size: 1.1em;
     cursor:pointer;
+    padding: 3px;
     `;
 
 const SuccessButton = styled.button`
     background-color: rgb(142, 222, 102);
-    border: solid 0.5px;
+    border: solid 1.1px;
     border-radius: 1px;
     padding: 3px;
     color: darkgreen;
-    font-size: 0.5em;
+    font-size: 1.1em;
     cursor:pointer;
     `;
 
 const IngredientsWrapper = styled.div`
     position:relative;
-    width: 90%;
+    width: 91%;
     margin: 5%;
     max-height: 10vw;
     overflow: auto;
     `;
 
 const RecipeForm = (props) => {
+        const history = useHistory();
+
         const buildDefaultRecipe = () => {
-            if (props.isEditing) {
+            if (props.isEditing && !!history.location.state) {
                 const editableRecipe = history.location.state;
+
                 return {
                     recipeName: editableRecipe.name,
                     recipeDescription: editableRecipe.description,
@@ -113,7 +116,6 @@ const RecipeForm = (props) => {
             return {recipeName: '', recipeDescription: '', currentIngredient: '', ingredients: []};
 
         }
-        const history = useHistory();
         const defaultRecipe = buildDefaultRecipe(history.location.state);
         const [recipe, setRecipe] = useState(defaultRecipe);
 
@@ -144,10 +146,14 @@ const RecipeForm = (props) => {
         }
 
         const disableSubmit = (evt) => {
-            if (evt.key === 'Enter') evt.preventDefault();
+            if (evt.key === 'Enter') {
+                evt.stopPropagation();
+                evt.preventDefault();
+
+            }
         }
 
-        const handleSubmit = (evt) => {
+        const handleSubmit = async (evt) => {
             evt.preventDefault();
 
             const payload = {
@@ -158,21 +164,17 @@ const RecipeForm = (props) => {
 
             if (props.isEditing) {
                 payload.id = history.location.state.id;
-                put(`${BASE_URL}recipe/recipes/${payload.id}/`, payload)
-                    .then(r => {
-                        history.push('/home');
-                    });
+                await RecipesService.update(payload);
+                history.push('/home');
             } else {
-                post(`${BASE_URL}recipe/recipes/`, payload)
-                    .then(r => {
-                        history.push('/home');
-                    });
+                await RecipesService.create(payload);
+                history.push('/home');
             }
         };
 
         return (
             <FormContainer>
-                <form onSubmit={handleSubmit}>
+                <form data-testid='form-recipe' onSubmit={handleSubmit}>
                     <Fields>
                         <FieldWrapper>
                             <Label htmlFor='recipe-name'>Recipe name:</Label>
@@ -202,7 +204,8 @@ const RecipeForm = (props) => {
                     </Fields>
                     <ButtonsWrapper>
                         <Button onClick={GoBack}>Back<Icon className="fa fa-step-backward"/></Button>
-                        <SuccessButton disabled={!canSave} className={!canSave ? 'disabled' : ''}>
+                        <SuccessButton data-testid='success-action-button' disabled={!canSave}
+                                       className={!canSave ? 'disabled' : ''}>
                             {props.isEditing ? 'Update' : 'Create'}
                             <Icon className="fa fa-check"></Icon>
                         </SuccessButton>
