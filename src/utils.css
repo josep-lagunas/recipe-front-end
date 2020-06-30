@@ -12,6 +12,7 @@
     }
     80% {
         transform: rotate(270deg) scale(1.5);
+        opacity: 0.4;
     }
     100% {
         transform: rotate(360deg) scale(0);
@@ -22,4 +23,5 @@
 .disabled {
     background-color: #eeeeee !important;
     color: #666666 !important;
+    cursor: not-allowed!important;
 }

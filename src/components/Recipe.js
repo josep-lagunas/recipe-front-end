@@ -20,10 +20,7 @@ const RecipeContainer = styled.div`
         align-items: center;
         overflow: hidden;
         opacity: 0.7;
-        
-        
         transition: all 0.3s;
-
         &:hover{
             background-color: #fff;
             opacity: 1;
@@ -35,7 +32,7 @@ const RecipeContainer = styled.div`
 
 const Title = styled.p`
         font-family: 'Annie Use Your Telescope', cursive;
-        font-size: 0.7em;
+        font-size: 1.5em;
         width: inherit;
      `;
 
@@ -51,12 +48,12 @@ const IconsContainer = styled.div`
      `;
 
 const Icon = styled.i`
-        font-size: 0.4em;
+        font-size: 1.1em;
         margin-right: 3px;
         cursor: pointer;
      `;
 
-const Recipe = (props) => {
+export default (props) => {
 
     const [removed, setRemoved] = useState(false);
     const [id, setId] = useState(-1);
@@ -64,7 +61,8 @@ const Recipe = (props) => {
     const history = useHistory();
 
     const performRemoveActions = evt => {
-        evt.stopPropagation()
+        evt.stopPropagation();
+
         setRemoved(true);
         setId(props.recipe.id);
     };
@@ -80,11 +78,9 @@ const Recipe = (props) => {
                              props.onremove(props.recipe.id);
                          }}>
             <Title key={uuid().toString()}>{props.recipe.name}</Title>
-            <IconsContainer onClick={performRemoveActions}>
-                <Icon className="fa fa-trash" />
+            <IconsContainer>
+                <Icon className="fa fa-trash" onClick={performRemoveActions}/>
             </IconsContainer>
         </RecipeContainer>
     );
 }
-
-export default Recipe;

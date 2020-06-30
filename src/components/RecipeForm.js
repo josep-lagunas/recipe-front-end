@@ -7,17 +7,16 @@ import {useHistory} from 'react-router-dom';
 import '../utils.css';
 
 const Fields = styled.div`
-    margin-top: 10vh;
+    margin-top: 5vh;
     `;
 
 const FormContainer = styled.div`
     background-color: #fff;
     display: inline-table;
     position: relative;
-    margin: 10vh; 
-    margin-top: 20vh;   
+    margin-top: 20vh;
     max-height: 60vh;
-    border: solid 0.5px #fff;
+    border: solid 1.1px #fff;
     border-radius: 4px;
     width: 40vw;
     cursor: pointer;
@@ -30,17 +29,17 @@ const FormContainer = styled.div`
 
 const Input = styled.input`
     display: flex;
-    width: 60%;     
+    width: 65%;     
     margin-left: 3%;
-    font-size: 0.5em;
+    font-size: 1.1em;
     padding: 3px;
     `;
 
 const TextArea = styled.textarea`
     display: flex;
-    width: 60%;
+    width: 65%;
     margin-left: 3%;
-    font-size: 0.5em;
+    font-size: 1.1em;
     padding: 3px;
     font-family: arial;
     `;
@@ -48,7 +47,7 @@ const TextArea = styled.textarea`
 const Label = styled.label`
     display: inline-block;
     width: 27%;
-    font-size: 0.5em;
+    font-size: 1.1em;
     text-align: right;
     font-family: arial;
     `;
@@ -56,7 +55,7 @@ const Label = styled.label`
 const FieldWrapper = styled.div`
     display: flex;
     align-items: center;
-    width: 96%;
+    width: 100%;
     margin-top: 2%;
     `;
 
@@ -67,7 +66,7 @@ const Icon = styled.i`
     `;
 
 const ButtonsWrapper = styled.div`
-    width: 90%;
+    width: 95%;
     bottom: 15px;
     text-align: right;
     margin: 10px;
@@ -76,23 +75,24 @@ const ButtonsWrapper = styled.div`
 const Button = styled.button`
     margin-right: 10px;
     width: auto;
-    font-size: 0.5em;
+    font-size: 1.1em;
     cursor:pointer;
+    padding: 3px;
     `;
 
 const SuccessButton = styled.button`
     background-color: rgb(142, 222, 102);
-    border: solid 0.5px;
+    border: solid 1.1px;
     border-radius: 1px;
     padding: 3px;
     color: darkgreen;
-    font-size: 0.5em;
+    font-size: 1.1em;
     cursor:pointer;
     `;
 
 const IngredientsWrapper = styled.div`
     position:relative;
-    width: 90%;
+    width: 91%;
     margin: 5%;
     max-height: 10vw;
     overflow: auto;
@@ -100,8 +100,9 @@ const IngredientsWrapper = styled.div`
 
 const RecipeForm = (props) => {
         const buildDefaultRecipe = () => {
-            if (props.isEditing) {
+            if (props.isEditing && !!history.location.state) {
                 const editableRecipe = history.location.state;
+
                 return {
                     recipeName: editableRecipe.name,
                     recipeDescription: editableRecipe.description,

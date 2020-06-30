@@ -2,24 +2,24 @@ import React from "react";
 import styled from 'styled-components'
 import '../utils.css';
 
-const IngredientContainer = styled.div`    position: relative;
+const IngredientContainer = styled.div`
+    position: relative;
     width: fit-content;
-    height: 10px;
-    font-size: 0.5em;
+    font-size: 1.1em;
     padding: 3px;
     border: solid 0.5px orange;
-    line-height: 8px;
+    line-height: 1em;
     border-radius: 3px;
     float: left;
     margin: 1px;
+    background-color: darkseagreen;
+    color: white;
     `;
 
-const Ingredient = (props) => {
-    return <IngredientContainer>
-        {props.ingredient.name}&nbsp;
-        <i className='fa fa-remove' style={{'cursor': 'pointer'}}
-           onClick={() => props.onremove(props.ingredient.id)}/>
-    </IngredientContainer>
-};
-
-export default Ingredient;
+export default (props) => {
+    return (
+        <IngredientContainer>
+            {props.ingredient.name}&nbsp;
+            <i className='fa fa-remove' onClick={() => props.onremove(props.ingredient.id)}/>
+        </IngredientContainer>);
+}
