@@ -1,11 +1,12 @@
-import React, {memo, useEffect, useReducer, useState} from "react";
-import recipesReducer from "../reducers/recipes.reducer";
-import {get, BASE_URL, remove} from "../helpers/ajax.helpers"
+import React, {memo, useState} from "react";
+import {BASE_URL, remove} from "../helpers/ajax.helpers"
 import styled from "styled-components";
 import {v4 as uuid} from 'uuid';
 import Recipe from "./Recipe";
 import {useHistory} from 'react-router-dom';
 import SearchBox from "./SearchBox";
+import useRecipesSelector from "../hooks/useRecipesSelector";
+import useApiClient from "../hooks/useApiClient";
 
 const RecipesContainer = styled.div`
     width: 82vw;
@@ -97,33 +98,23 @@ const SearchWrapper = styled.div`
     `;
 
 export default memo((props) => {
-    const initialState = {loading: true, data: [{initial: null}]};
 
-    const [state, dispatch] = useReducer(recipesReducer, initialState);
     const [recipeSearch, setSearch] = useState({text: '', searchExecuted: false});
+    let searchOperation = useApiClient('SEARCH_RECIPES',{textToSearch:''});
+    let deleteOperation = useApiClient('DELETE_RECIPE',{id:'-1'});
 
-    const existsData = state.data.length > 0;
-
+    const existsData = searchOperation.status === 'SUCCESS' && searchOperation.data.length > 0;
     const history = useHistory();
-
-    useEffect(() => {
-        const searchToApply = recipeSearch.text.trim() !== '' ? `?name=${recipeSearch.text}` : '';
-        get(`${BASE_URL}recipe/recipes/${searchToApply}`)
-            .then(result => {
-                dispatch({Type: 'FETCHING_SUCCESS', payload: result});
-            });
-
-    }, [recipeSearch]);
 
     const onSearch = textToSearch => {
         setSearch({text: textToSearch, searchExecuted: true});
     }
 
     const onRemove = (id) => {
-        setSearch({text: '', searchExecuted: false})
+
         remove(`${BASE_URL}recipe/recipes`, id)
             .then(result => {
-                dispatch({Type: 'REMOVING_SUCCESS', payload: {id: id}});
+                fetchResult = useRecipesSelector(recipeSearch.text);
             });
     }
 
@@ -151,12 +142,12 @@ export default memo((props) => {
 
                 <RecipesContainer key={uuid().toString()}>
                     {
-                        state.loading ? <Loading key={uuid().toString()}>loading data...</Loading> :
-                            state.data.map(r => <Recipe key={uuid().toString()} recipe={r} onremove={onRemove}/>)
+                        searchOperation.isLoading ? <Loading key={uuid().toString()}>loading data...</Loading> :
+                            searchOperation.data.map(r => <Recipe key={uuid().toString()} recipe={r} onremove={onRemove}/>)
                     }
                 </RecipesContainer>
             </>}
-            {!state.loading && existsData &&
+            {!searchOperation.isLoading && existsData &&
             <AddRecipeButton onClick={() => {
                 history.push('/create');
             }}>+</AddRecipeButton>
